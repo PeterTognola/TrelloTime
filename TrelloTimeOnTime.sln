@@ -5,6 +5,8 @@ VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{A0786B88-2ADB-4C21-ABE8-AA2D79766269}") = "TrelloTimeOnTime", "TrelloTimeOnTime\TrelloTimeOnTime.phpproj", "{449E81AF-B368-42C2-B69D-703078A0EA51}"
 EndProject
+Project("{A0786B88-2ADB-4C21-ABE8-AA2D79766269}") = "OnTimeTrelloPowerUp", "OnTimeTrelloPowerUp\OnTimeTrelloPowerUp.phpproj", "{C4A383DC-8607-4EE1-8714-E62159423FCE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{449E81AF-B368-42C2-B69D-703078A0EA51}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{449E81AF-B368-42C2-B69D-703078A0EA51}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{449E81AF-B368-42C2-B69D-703078A0EA51}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C4A383DC-8607-4EE1-8714-E62159423FCE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C4A383DC-8607-4EE1-8714-E62159423FCE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C4A383DC-8607-4EE1-8714-E62159423FCE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C4A383DC-8607-4EE1-8714-E62159423FCE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

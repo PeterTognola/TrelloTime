@@ -1,0 +1,49 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Name>OnTimeTrelloPowerUp</Name>
+    <ProjectGuid>c4a383dc-8607-4ee1-8714-e62159423fce</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>OnTimeTrelloPowerUp</RootNamespace>
+    <ProjectTypeGuids>{A0786B88-2ADB-4C21-ABE8-AA2D79766269}</ProjectTypeGuids>
+    <AssemblyName>OnTimeTrelloPowerUp</AssemblyName>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <IncludeDebugInformation>true</IncludeDebugInformation>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <IncludeDebugInformation>false</IncludeDebugInformation>
+  </PropertyGroup>
+  <ItemGroup>
+    <Folder Include="images\" />
+    <Folder Include="images\pugify\" />
+    <Folder Include="Proxy\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="images\pugify\character.gif" />
+    <Content Include="images\pugify\cloud-sheet.png" />
+    <Content Include="images\pugify\dog-house.png" />
+    <Content Include="images\pugify\mountain.png" />
+    <Content Include="images\pugify\scene-ground.gif" />
+    <Content Include="images\pugify\scene-ground.png" />
+    <Content Include="images\pugify\start-screen-unopt.png" />
+    <Content Include="images\pugify\start-screen.png" />
+    <Content Include="images\pugify\tree-sheet.png" />
+    <Content Include="pug-scroller.html" />
+    <Content Include="create-worklog.html" />
+    <Content Include="images\trello-icon-999.png" />
+    <Content Include="images\trello-icon-999.svg" />
+    <Content Include="images\trello-icon-F6F6F6.svg" />
+    <Content Include="images\trello-icon-FFF.svg" />
+    <Content Include="images\trello-icon.png" />
+    <Content Include="index.html" />
+    <Content Include="manifest.json" />
+    <Content Include="settings.html" />
+    <Content Include="trello-powerup.min.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Proxy\auth.php" />
+    <Compile Include="Proxy\index.php" />
+  </ItemGroup>
+</Project>

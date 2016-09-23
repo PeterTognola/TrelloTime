@@ -1,0 +1,24 @@
+{
+  "name": "TrelloTime",
+  "description": "This is a power up that allows a board to integrate with a specific item on Axosoft OnTime.",
+  "details":"This power up allows a board to integrate with a specific item on Axosoft OnTime.",
+  "icon": {
+    "url": "./images/trello-icon.png"
+  },
+  "author": "Jimmy @ Phoenix Software Ltd",
+  "capabilities": [
+    "card-buttons",
+    "show-settings",
+    "callback"
+  ],
+  "connectors": {
+    "iframe": {
+      "url": "./"
+    }
+  },
+  "recommend": {
+    "urls": [
+      "https://www.phoenixs.com/"
+    ]
+  }
+}

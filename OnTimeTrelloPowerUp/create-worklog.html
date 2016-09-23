@@ -1,0 +1,245 @@
+﻿<html>
+<head>
+    <!-- Trello Power-Up Library -->
+    <script src="https://trello.com/power-ups/power-up.min.js"></script>
+    <link rel="stylesheet" href="https://trello.com/power-ups/power-up.css" />
+    <script>
+        var t = TrelloPowerUp.iframe();
+        var context = t.args[0].context;
+
+        var API = {
+            appCredentials: {
+                grant_type: "password",
+                username: "TestRail",
+                password: "TestRail01",
+                client_id: "de29d102-53a7-4ae3-a47d-3821cd56d6f1",
+                client_secret: "6b30e841-f106-47bc-b019-972697fb902b"
+            },
+
+            appUrl: {
+                axosoftApiVersion: "v5",
+                baseUrl: "http://ontime01/ontimeweb",
+                axosoftApiBaseUrl: "http://ontime01/ontimeweb" + "/api/" + "v5/"
+            },
+
+            token: {},
+
+            init: function (username, password, clientId, clientSecret) {
+                API.appCredentials.username = username;
+                API.appCredentials.password = password;
+                API.appCredentials.client_id = clientId;
+                API.appCredentials.client_secret = clientSecret;
+            },
+
+            setScope: function (scope) {
+                API.appCredentials.scope = scope;
+                API.token = {};
+            },
+
+            authenticateCredentails: function (callback) {
+                if (!API.token.access_token) {
+                    var xhttp = new XMLHttpRequest();
+                    xhttp.onreadystatechange = function () {
+                        if (this.readyState === 4 && this.status === 200) {
+                            API.token = JSON.parse(xhttp.response);
+                            //todo display error.
+                            callback(null);
+                        }
+                    };
+
+                    var credential = "?";
+
+                    for (var item in API.appCredentials) {
+                        if (!API.appCredentials.hasOwnProperty(item)) continue;
+                        credential += item + "=" + API.appCredentials[item] + "%26";
+                    }
+
+                    credential = "params=" + credential.substring(0, credential.length - 3);
+
+                    xhttp.open("GET", "Proxy/?URL=" + API.appUrl.baseUrl + "/api/oauth2/token" + "&" + credential, true);
+                    xhttp.send();
+                } else {
+                    callback(null);
+                }
+            },
+
+            restRequest: function (url, data, callback) {
+                API.authenticateCredentails(function () {
+                    var xhttp = new XMLHttpRequest();
+                    xhttp.onreadystatechange = function () {
+                        if (this.readyState === 4 && this.status === 200) {
+                            //todo display error.
+                            if (callback === undefined || callback === null)
+                                return JSON.parse(xhttp.response);
+                            else
+                                return callback(JSON.parse(xhttp.response));
+                        }
+                    };
+
+                    xhttp.open("POST", "Proxy/?URL=" + API.appUrl.axosoftApiBaseUrl + url + "?access_token=" + API.token.access_token, true);
+                    if (data !== undefined && data !== null) {
+                        var formData = new FormData();
+                        formData.append("data", data);
+                        xhttp.send(formData);
+                    } else {
+                        xhttp.send();
+                    }
+                });
+            }
+        };
+
+        var app = {
+            init: function() {
+                var input = document.getElementById("trelloTimeName");
+
+                var valuePromise = t.get("organization", "private", "trelloTimeName");
+                valuePromise.then(function (result) {
+                    if (result !== undefined && result !== null) {
+                        input.value = result;
+                        input.disabled = "disabled";
+                    }
+                });
+            },
+
+            submit:function(e) {
+                var inputTime = document.getElementById("timeWorked").value.toLowerCase(),
+                    trelloTimeName = document.getElementById("trelloTimeName").value,
+                    spentTime;
+
+                if (inputTime === undefined || inputTime === null || inputTime === "") return false;
+                if (trelloTimeName === undefined || trelloTimeName === null || trelloTimeName === "") return false;
+
+                if (inputTime.indexOf("day") > -1) {
+                    spentTime = parseInt(inputTime.split("day")[0]) * 24 * 60;
+                }
+
+                if (inputTime.indexOf("hour") > -1) {
+                    spentTime = parseInt(inputTime.split("hour")[0]) * 60;
+                }
+
+                if (inputTime.indexOf("min") > -1) {
+                    spentTime = parseInt(inputTime.split("min")[0]);
+                }
+
+                if (spentTime === undefined || spentTime === 0) return false;
+
+                t.set("organization", "private", "trelloTimeName", trelloTimeName);
+
+                app.getUserId(trelloTimeName, spentTime);
+
+                return false;
+            },
+
+            getUserId: function (userName, time) {
+                API.setScope("read");
+                API.restRequest("users/", null, function (data) {
+                    data.data.forEach(function(user) {
+                        if (userName === user.full_name) {
+                            app.submitWorkLog(user.id, time, "https://trello/c/" + context.card);
+                        }
+                    });
+                });
+            },
+
+            submitWorkLog: function (userid, time, description) { //todo proper json.
+                var currentdate = new Date();
+
+                API.setScope("write");
+                API.restRequest(
+                    "work_logs/",
+                    '{"user":{"id":"' + userid + '"},"work_done":{"time_unit":{"id":1},"duration":' + time + '},"date_time":"' + currentdate.getFullYear() + "-" + (currentdate.getMonth() + 1) + "-" + currentdate.getDate() + "T" + currentdate.getHours() + ":" + currentdate.getMinutes() + ":" + currentdate.getSeconds() + ".000Z" + '","work_log_type":{"id":"0"},"description":"' + description + '","item":{"id":1627,"item_type":"tasks"},"update_remaining_time":true,"remaining_time":{"duration":0,"time_unit":{"id":2}}}',
+                    function () {
+                        t.closePopup();
+                    });
+            }
+        };
+    </script>
+    <style>
+        body, input {
+            color: #4d4d4d;
+            font: 14px "Helvetica Neue",Arial,Helvetica,sans-serif;
+            line-height: 18px;
+        }
+
+        input[type=text] {
+            -moz-box-sizing: border-box;
+            box-sizing: border-box;
+            -webkit-appearance: none;
+            background-color: #E2E4E6;
+            border: 1px solid #CDD2D4;
+            border-radius: 3px;
+            display: block;
+            min-height: 34px;
+            padding: 7px;
+            margin: 4px 0 9pt;
+            width: 100%;
+
+            -webkit-transition: background 85ms ease-in,border-color 85ms ease-in;
+            transition: background 85ms ease-in,border-color 85ms ease-in;
+        }
+
+        input[type=text]:hover {
+            border-color: #A5ACB0;
+        }
+
+        input[type=text]:focus {
+            background: #fff;
+            border-color: #298FCA;
+            box-shadow: 0 0 2px #298FCA;
+            outline: 0;
+        }
+
+        input[type=submit] {
+            -moz-box-sizing: border-box;
+            box-sizing: border-box;
+            -webkit-appearance: none;
+            min-height: 34px;
+            border-radius: 3px;
+            border: none;
+            cursor: pointer;
+            display: inline-block;
+            font-weight: 700;
+            line-height: 22px;
+            margin: 8px 4px 0 0;
+            padding: 7px 20px;
+            text-align: center;
+            background: -webkit-linear-gradient(top,#61BD4F 0,#5AAC44 100%);
+            background: linear-gradient(to bottom,#61BD4F 0,#5AAC44 100%);
+            box-shadow: 0 1px 0 #3F6F21;
+            color: #fff;
+            padding-left: 30px;
+            padding-right: 30px;
+        }
+
+        input[type=submit]:hover {
+            background: -webkit-linear-gradient(top,#5AAC44 0,#519839 100%);
+            background: linear-gradient(to bottom,#5AAC44 0,#519839 100%);
+        }
+
+        input[type=submit]:active {
+            background: -webkit-linear-gradient(top,#519839 0,#49852E 100%);
+            background: linear-gradient(to bottom,#519839 0,#49852E 100%);
+        }
+
+        form {
+            margin: 0 0 3px;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <form onsubmit="return app.submit()">
+            <label>Work By</label>
+            <input type="text" value="" placeholder="Enter Your Name" id="trelloTimeName" />
+
+            <label>Time Worked</label>
+            <input type="text" placeholder="Ex: 30mins" id="timeWorked" />
+
+            <input class="primary wide confirm js-add-checklist" type="submit" value="Add" />
+        </form>
+    </div>
+    <script>
+        app.init();
+    </script>
+</body>
+</html>

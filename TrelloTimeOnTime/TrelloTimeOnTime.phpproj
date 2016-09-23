@@ -16,6 +16,13 @@
     <IncludeDebugInformation>false</IncludeDebugInformation>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="index.php" />
+    <Content Include="index.php" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Proxy\index.php" />
+    <Compile Include="Proxy\auth.php" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Proxy\" />
   </ItemGroup>
 </Project>

@@ -1,0 +1,320 @@
+﻿<html>
+<head>
+    <style>
+body {}
+
+#pug_canvas {
+    width: 465px; /*650px*/
+    height: 300px;
+    margin: 0 auto;
+    background-color: #4DA5C4;
+    overflow: hidden;
+    position: absolute;
+    left: 50%;
+    margin-left: -325px;
+    top: 50%;
+    margin-top: -150px;
+}
+
+#pug_canvas .pug_overlay {
+    height: 100%;
+    width: 100%;
+    background-color: #FFFFFF;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: -2;
+    display: block;
+}
+
+#pug_canvas .character {
+    width: 50px;
+    height: 50px;
+    display: block;
+    position: absolute;
+    transition: all 0.3s ease-in-out;
+    background-image: url(images/pugify/character.gif);
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position-x: center;
+    background-position-y: bottom;
+    z-index: 3;
+
+
+}
+
+#pug_canvas .mountain {
+    width: 560px;
+    height: 200px;
+    display: inline-block;
+    position: absolute;
+    background-image: url(images/pugify/mountain.png);
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position-x: center;
+    background-position-y: center;
+    z-index: 0;
+}
+
+.pug_floor {
+    width: 100%;
+    height: 20px;
+    background-repeat: repeat-x;
+    background-image: url(images/pugify/scene-ground.gif);
+    background-size: contain;
+    margin-top: 285px;
+    float: left;
+    z-index: 2;
+    position: absolute;
+}
+
+.pug_enemy_tree {
+    width: 70px;
+    height: 70px;
+    display: inline-block;
+    position: absolute;
+    background-image: url(images/pugify/tree-sheet.png);
+    background-size: contain;
+    background-repeat: no-repeat;
+    margin-top: 215px;
+    z-index: 1;
+}
+
+.pug_small_cloud {
+    width: 200px;
+    height: 130px;
+    display: inline-block;
+    position: absolute;
+    background-image: url(images/pugify/cloud-sheet.png);
+    background-size: contain;
+    background-repeat: no-repeat;
+    z-index: 1;
+}
+
+#pug_canvas .dog_house {
+    width: 40px;
+    height: 40px;
+    display: inline-block;
+    position: absolute;
+    background-image: url(images/pugify/dog-house.png);
+    background-size: contain;
+    background-repeat: no-repeat;
+    z-index: 2;
+    margin-top: 250px;
+}
+    </style>
+</head>
+<body>
+    <div id="pug_canvas"></div>
+
+
+<script>
+    var pug_canvas = "pug_canvas";
+
+    var pug_overlay = "pug_overlay";
+
+    var pug_character = "character";
+    var pug_character_posY = 240;
+    var pug_character_posX = 10;
+    var pug_character_posYJump = 160;
+
+    var pug_floor = "pug_floor";
+
+    var pug_level = 1;
+
+    var small_tree = "pug_enemy_tree";
+
+    var small_cloud = "pug_small_cloud";
+
+    var mountain = "mountain";
+
+    var dog_house = "dog_house";
+
+    var initialRun = false;
+
+    var PugScroller = {
+        init: function () {
+            this.initiateCharacter();
+            this.setScene("light");
+            this.setFloor();
+            this.developEnemy();
+            this.scrollingMagic();
+        },
+
+        initiateCharacter: function () {
+            this._(pug_canvas).innerHTML = this.createEntity("overlay");
+            this._(pug_canvas).innerHTML += this.createEntity("character");
+            setTimeout(function () {
+                PugScroller._(pug_character).style.marginTop = pug_character_posY + "px";
+                PugScroller._(pug_character).style.marginLeft = pug_character_posX + "px";
+            }, 50);
+
+            this._(pug_canvas).addEventListener("click", PugScroller.characterJump, true);
+        },
+
+        characterJump: function () { //todo this whole function is awful.
+            PugScroller._(pug_character).style.transition = "all 0.4s ease-in-out";
+            PugScroller._(pug_character).style.marginTop = pug_character_posYJump + "px";
+
+            setTimeout(function () {
+                PugScroller._(pug_character).style.transition = "all 0.3s ease-in-out";
+                PugScroller._(pug_character).style.marginTop = pug_character_posY + "px";
+            }, 500);
+        },
+
+        developEnemy: function (time) {
+            //Trees
+
+            var smallTreeUse = document.querySelectorAll("#" + pug_canvas + " ." + small_tree);
+            if (smallTreeUse.length < (3 * pug_level)) { //todo change to switch
+                this._(pug_canvas).innerHTML += this.createEntity("small-tree"); //todo set random position past 650px
+            }
+
+            for (var i = 0; i < smallTreeUse.length; i++) {
+                if (parseInt(smallTreeUse[i].style.marginLeft, 10) < -700) {
+                    smallTreeUse[i].style.marginLeft = (650 + Math.floor((Math.random() * 100) + 1)) + "px";
+
+                }
+            }
+
+            //Clouds
+
+            var smallCloudUse = document.querySelectorAll("#" + pug_canvas + " ." + small_cloud);
+            if (smallCloudUse.length < 7) { //todo change to switch
+                this._(pug_canvas).innerHTML += this.createEntity("small-cloud"); //todo set random position past 650px
+            }
+
+            for (var j = 0; j < smallCloudUse.length; j++) {
+                if (parseInt(smallCloudUse[j].style.marginLeft, 10) < -800) {
+                    smallCloudUse[j].style.marginLeft = (650 + Math.floor((Math.random() * 100) + 1)) + "px";
+                }
+            }
+
+            //Mountain
+
+            var mountainUse = document.querySelectorAll("#" + pug_canvas + " ." + mountain);
+            if (mountainUse.length < 2) { //todo change to switch
+                this._(pug_canvas).innerHTML += this.createEntity("mountain"); //todo set random position past 650px
+            }
+
+            for (var k = 0; k < mountainUse.length; k++) {
+                if (parseInt(mountainUse[k].style.marginLeft, 10) < -900) {
+                    mountainUse[k].style.marginLeft = (650 + Math.floor((Math.random() * 500) + 1)) + "px";
+
+                }
+            }
+
+            //DogHouse
+
+            var dogHouseUse = document.querySelectorAll("#" + pug_canvas + " ." + dog_house);
+            if (dogHouseUse.length < 5 * pug_level) { //todo change to switch
+                this._(pug_canvas).innerHTML += this.createEntity("dog-house"); //todo set random position past 650px
+            }
+
+            for (var l = 0; l < dogHouseUse.length; l++) {
+                if (parseInt(dogHouseUse[l].style.marginLeft, 10) < -900) {
+                    dogHouseUse[l].style.marginLeft = (650 + Math.floor((Math.random() * 700) + 1)) + "px";
+
+                }
+            }
+
+            if (time === 12) {
+                pug_level = pug_level + 1;
+                time = 1;
+            }
+
+            time = time + 1;
+
+            setTimeout(function () {
+                PugScroller.developEnemy(time);
+            }, 1000);
+        },
+
+        setScene: function (scene) {
+            switch (scene) {
+            case "light":
+                this._(pug_canvas).backgroundColor = "#4DA6FF";
+                break;
+            default:
+                this._(pug_canvas).backgroundColor = "#EDEDED";
+                break;
+            }
+        },
+
+        setFloor: function () {
+            this._(pug_canvas).innerHTML += this.createEntity("floor");
+        },
+
+        scrollingMagic: function () {
+            var elements = document.querySelectorAll("#" + pug_canvas + " .scroll");
+
+            for (var i = 0; i < elements.length; i++) {
+                var element = elements[i];
+                element.style.marginLeft = (parseInt(element.style.marginLeft, 10) - (2 * pug_level)) + "px";
+            }
+
+            var elementsSlow = document.querySelectorAll("#" + pug_canvas + " .scroll-slow"); //merge into one loop.
+
+            for (var j = 0; j < elementsSlow.length; j++) {
+                var elementSlow = elementsSlow[j];
+                elementSlow.style.marginLeft = (parseInt(elementSlow.style.marginLeft, 10) - (1 * pug_level)) + "px";
+            }
+
+            var elementsStood = document.querySelectorAll("#" + pug_canvas + " .scroll-stood"); //merge into one loop.
+
+            for (var k = 0; k < elementsStood.length; k++) {
+                var elementStood = elementsStood[k];
+                elementStood.style.marginLeft = (parseInt(elementStood.style.marginLeft, 10) - 1) + "px";
+            }
+
+            var elementsFast = document.querySelectorAll("#" + pug_canvas + " .scroll-fast");
+
+            for (var l = 0; l < elementsFast.length; l++) {
+                var elementFast = elementsFast[l];
+                elementFast.style.marginLeft = (parseInt(elementFast.style.marginLeft, 10) - (6 * pug_level)) + "px";
+            }
+
+            setTimeout(function () {
+                PugScroller.scrollingMagic();
+            }, 24); //change to fps
+        },
+
+        scrollingAnimation: function () {
+
+        },
+
+        createEntity: function (type) {
+            switch (type) {
+            case "overlay":
+                return "<div class=\"" + pug_overlay + "\" id=\"" + pug_overlay + "\"></div>";
+            case "character":
+                return "<div class=\"character\" id=\"" + pug_character + "\"></div>";
+            case "floor":
+                return "<div class=\"pug_floor\" id=\"" + pug_floor + "\"></div>";
+            case "small-tree":
+                return "<div class=\"pug_enemy_tree scroll\" style=\"background-position-x:0; margin-left:" + (650 + Math.floor((Math.random() * 1000) + 1)) + "px;\"></div>"; //todo set random position past 650px
+            case "small-cloud":
+                return "";
+            //return "<div class=\"" + small_cloud + " scroll-slow\" style=\"background-position-x:0; margin-left:" + (650 + Math.floor((Math.random() * 100) + 1)) + "px; margin-top:" + Math.floor((Math.random() * 80) + 1) + "px;\"></div>";
+            case "mountain":
+                return "<div class=\"" + mountain + " scroll-stood\" style=\"background-position-x:0; margin-left:650px; margin-top:150px;\"></div>";
+            case "dog-house":
+                return "<div class=\"" + dog_house + " scroll-fast\" style=\"margin-left:" + (650 + Math.floor((Math.random() * 1000) + 1)) + "px;\"></div>";
+            }
+
+            return false;
+        },
+
+        _: function (id) {
+            return document.getElementById(id);
+        }
+    };
+
+    PugScroller.init();
+
+    Element.prototype.remove = function () {
+        this.parentElement.removeChild(this);
+    }
+</script>
+</body>
+</html>

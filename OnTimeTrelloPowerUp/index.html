@@ -1,0 +1,55 @@
+<html>
+<head>
+	<script src="https://trello.com/power-ups/power-up.min.js"></script>
+	<script>
+		TrelloPowerUp.initialize({
+			'card-buttons': function(t, card) {
+				return [
+				{
+					icon: './images/trello-icon-999.svg',
+					text: "TrelloTime",
+					callback: function (t, card) {
+					    t.popup({
+					        title: 'TrelloTime',
+					        items: [
+					            {
+					                text: 'Add Worklog',
+					                callback: function(t) {
+					                    t.popup({
+					                        title: 'Add Worklog',
+					                        url: './create-worklog.html',
+					                        height: 183
+					                    });
+					                }
+					            },
+
+                                {
+                                    text: 'My Dimension',
+                                    callback: function (t) {
+                                        t.popup({
+                                            title: 'The Phx Dimension',
+                                            url: './pug-scroller.html',
+                                            height: 300
+                                        });
+                                    }
+                                }
+					        ]
+					    });
+					}
+				}];
+			},
+			'show-settings': function(t, options) {
+				t.popup({
+				    title: "TrelloTime Settings",
+					url: 'settings.html',
+					height: 250
+				});
+			}
+
+		});
+	</script>
+</head>
+<body>
+	<!-- Not rendered -->
+</body>
+</html>
